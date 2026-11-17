@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>حاسبة RR</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="حاسبة RR">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{color-scheme:dark;--bg:#000;--card:#0e0f12;--tx:#f2f4f7;--mu:#8b93a1;--bd:#1d1f25;--ac:#2ee6a6;--ac2:#17b887;--bad:#ff5c63;--gold:#f5c451;--sh:0 6px 24px rgba(0,0,0,.6);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,#0f2a21 0,#000 46%) no-repeat,#000;color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;display:flex;justify-content:center;padding:22px 14px 40px}
+.w{width:100%;max-width:440px}
+h1{font-size:26px;margin:0 0 6px;text-align:center;font-weight:800;background:linear-gradient(90deg,var(--gold),var(--ac));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:16px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+h2::before{content:"";width:4px;height:18px;border-radius:4px;background:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:var(--sh)}
+label{display:block;font-size:13px;color:var(--mu);margin:14px 0 6px;font-weight:600}
+label:first-child{margin-top:0}
+input,select{width:100%;padding:13px 14px;font:inherit;font-size:17px;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:12px}
+input{direction:ltr;text-align:left}
+input:focus,select:focus{outline:2px solid var(--ac);border-color:transparent}
+.res{margin-top:18px;text-align:center;border-top:1px solid var(--bd);padding-top:16px}
+.rr{font-size:50px;font-weight:800;line-height:1.1;color:var(--ac);direction:ltr;letter-spacing:-1px}
+.rr.low{color:var(--bad)}
+.row{display:flex;gap:10px;margin-top:14px}
+.box{flex:1;border-radius:14px;padding:12px 8px;text-align:center}
+.box:nth-child(1){background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.box:nth-child(2){background:color-mix(in srgb,var(--ac) 12%,transparent)}
+.box small{display:block;color:var(--mu);font-size:12px;margin-bottom:4px}
+.box b{font-size:22px;direction:ltr;display:inline-block}
+.g{color:var(--ac)}.r{color:var(--bad)}
+.sub{color:var(--mu);font-size:14px;margin-top:12px}
+.seg{display:flex;gap:6px;background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:4px}
+.seg button{flex:1;border:0;background:none;color:var(--mu);padding:11px 4px;border-radius:10px;font:inherit;font-weight:700;cursor:pointer;transition:.15s}
+.seg button.on{background:var(--ac);color:#04140e;box-shadow:0 2px 8px rgba(15,157,107,.35)}
+.seg button.on.loss{color:#fff;background:var(--bad);box-shadow:0 2px 8px rgba(224,75,75,.35)}
+.seg button.on.be{color:#000;background:var(--mu);box-shadow:none}
+.save{width:100%;margin-top:18px;padding:15px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#04140e;font:inherit;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 6px 16px rgba(15,157,107,.3)}
+.save:active{transform:scale(.98)}
+.msg{font-size:13px;color:var(--bad);margin-top:8px;min-height:16px;text-align:center}
+.st{font-size:14px;line-height:2.1;margin-top:8px}
+.st div{display:flex;justify-content:space-between;border-bottom:1px dashed var(--bd)}
+.st div:last-child{border:0}
+.tr{display:flex;align-items:center;gap:8px;padding:11px 12px;margin-top:8px;background:var(--bg);border-radius:12px;border-inline-start:4px solid var(--mu);font-size:14px}
+.tr.win{border-inline-start-color:var(--ac)}
+.tr.loss{border-inline-start-color:var(--bad)}
+.tr .i{flex:1;font-weight:700}
+.tr .i small{display:block;color:var(--mu);font-size:12px;font-weight:400;margin-top:2px}
+.tr .d{font-weight:800;direction:ltr}
+.x{border:0;background:none;color:var(--mu);font-size:20px;cursor:pointer;padding:4px 8px}
+.empty{color:var(--mu);font-size:14px;text-align:center;padding:10px 0}
+.exp{width:100%;margin-top:14px;padding:12px;border:1px solid var(--bd);border-radius:12px;background:none;color:var(--gold);font:inherit;font-weight:700;cursor:pointer;display:block}
+.eqw{margin:12px 0 4px;background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:8px}
+.eqw svg{width:100%;height:auto;display:block}
+.eqw small{display:block;color:var(--mu);font-size:12px;padding:0 4px 2px}
+#flt{margin-top:10px;font-size:15px;padding:10px 12px}
+.two{display:flex;gap:10px;margin-top:14px}.two>div{flex:1;min-width:0}
+.alert{padding:12px;border-radius:12px;font-weight:700;font-size:14px;margin-top:14px;text-align:center}
+.alert.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad);border:1px solid var(--bad)}
+.alert.good{background:color-mix(in srgb,var(--ac) 16%,transparent);color:var(--ac);border:1px solid var(--ac)}
+.pb{margin-top:12px}.pbh{display:flex;justify-content:space-between;font-size:13px;color:var(--mu);margin-bottom:5px}.pbh b{color:var(--tx);direction:ltr}
+.pbt{height:9px;background:var(--bd);border-radius:9px;overflow:hidden}.pbt i{display:block;height:100%;border-radius:9px;transition:width .3s}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-end:5px}
+.box.t1{background:color-mix(in srgb,var(--ac) 11%,transparent)}.box.t1 b{color:var(--ac)}
+.box.t2{background:color-mix(in srgb,#ff9f5a 14%,transparent)}.box.t2 b{color:#ff9f5a}
+.stp{border:1px solid var(--bd);border-radius:14px;padding:10px 12px;margin-top:8px}
+.stp.dn{border-color:var(--ac)}.stp.lk{opacity:.4}
+.stp .hd{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;font-size:14px}
+.stp .nn{width:26px;height:26px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--mu);flex:none}
+.stp.dn .nn{background:var(--ac);border-color:var(--ac);color:#04140e}
+.chp{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.chp button{border:1px solid var(--bd);background:none;color:var(--mu);padding:7px 13px;border-radius:999px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.chp button.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.ckst{margin-top:8px;text-align:center;font-size:13px;font-weight:700;color:var(--mu)}.ckst.ok{color:var(--ac)}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>حاسبة RR</h1>
+<div class="sub" id="sync" style="text-align:center;margin:-8px 0 12px">محفوظ على جهازك (خد نسخة CSV من وقت للتاني)</div>
+
+<div class="card">
+<label>حجم الحساب ($)</label>
+<input id="ac" type="number" inputmode="decimal" value="1000" oninput="calc();accChart();saveCfg()">
+<label>الستوب ($)</label>
+<input id="sl" type="number" inputmode="decimal" value="25" oninput="calc()">
+<label>الهدف / الربح ($)</label>
+<input id="tp" type="number" inputmode="decimal" value="50" oninput="calc()">
+<div class="res">
+<div class="rr" id="out">—</div>
+<div class="row">
+<div class="box"><small>نسبة الخسارة من الحساب</small><b class="r" id="rp">—</b></div>
+<div class="box"><small>نسبة الربح من الحساب</small><b class="g" id="gp">—</b></div>
+</div>
+<div class="sub" id="sub"></div>
+</div>
+</div>
+
+<div class="card">
+<h2>تسجيل صفقة</h2>
+<div class="sub" style="margin-top:0">بتسجل بالستوب والهدف اللي فوق</div>
+<label>دخلت على أنهي كاندل بعد الـ CISD؟</label>
+<div class="seg" data-g="c">
+<button data-v="C1" class="on">C1</button><button data-v="C2">C2</button><button data-v="C3">C3</button>
+</div>
+<label>فريم الـ CISD</label>
+<select id="tf">
+<option value="1M">1 دقيقة</option>
+<option value="5M">5 دقايق</option>
+<option value="15M">15 دقيقة</option>
+<option value="30M">30 دقيقة</option>
+<option value="1H" selected>ساعة</option>
+<option value="4H">4 ساعات</option>
+<option value="D">يومي</option>
+</select>
+<label>الأصل</label>
+<select id="pr" onchange="syncPair(this.value)"><option value="XAU">ذهب</option><option value="NAS">ناسداك</option><option value="EUR">يورو</option><option value="GBP">استرليني</option><option value="JPY">ين ياباني</option></select>
+<label>التاريخ</label>
+<input id="dt" type="date">
+<div class="two"><div><label>وقت الدخول</label><input id="tm" type="time"></div><div><label>وقت الإغلاق</label><input id="tc" type="time"></div></div>
+<label>النتيجة</label>
+<div class="seg" data-g="res">
+<button data-v="win" class="on">ربح</button><button data-v="loss" class="loss">خسارة</button><button data-v="be" class="be">تعادل</button>
+</div>
+<label>صورة الشارت (اختياري)</label>
+<input id="im" type="file" accept="image/*" style="font-size:14px">
+<label>ملاحظة (اختياري)</label>
+<input id="nt" type="text" maxlength="120" placeholder="مثلًا: سويب لندن ثم CISD" style="direction:rtl;text-align:right;font-size:15px">
+<button class="save" onclick="save()">حفظ الصفقة</button>
+<div class="msg" id="msg"></div>
+</div>
+
+<div class="card">
+<h2>منحنى الحساب</h2>
+<label>المرحلة الحالية</label>
+<div class="seg" id="phs" data-g="ph"><button data-v="p1" class="on">المرحلة 1</button><button data-v="p2">المرحلة 2</button><button data-v="fn">ممول</button></div>
+<div id="tgrow" class="two"><div><label>هدف م1 (%)</label><input id="tg1" type="number" inputmode="decimal" value="8" oninput="accChart();saveCfg()"></div><div><label>هدف م2 (%)</label><input id="tg2" type="number" inputmode="decimal" value="5" oninput="accChart();saveCfg()"></div></div>
+<div class="two"><div><label>خسارة كلية (%)</label><input id="dd" type="number" inputmode="decimal" value="10" oninput="accChart();saveCfg()"></div><div><label>خسارة يومية (%)</label><input id="dl" type="number" inputmode="decimal" value="5" oninput="accChart();saveCfg()"></div></div>
+<label>نوع الخسارة الكلية</label>
+<div class="seg" id="dms" data-g="ddm"><button data-v="st">ثابتة</button><button data-v="tr" class="on">متحركة مع الربح</button></div>
+<div id="accal"></div>
+<div class="row" id="acct"></div>
+<div class="eqw"><div id="acc"></div></div>
+<div id="accb"></div>
+<div class="st" id="accs"></div>
+</div>
+
+<div class="card">
+<h2>الإحصائيات</h2>
+<select id="flt" onchange="fltChange()"><option value="">كل الأصول</option><option value="XAU">ذهب</option><option value="NAS">ناسداك</option><option value="EUR">يورو</option><option value="GBP">استرليني</option><option value="JPY">ين ياباني</option></select>
+<div class="eqw"><small>منحنى الأرباح</small><div id="eq"></div></div>
+<div class="st" id="stats"></div>
+</div>
+
+<div class="card">
+<h2>الصفقات</h2>
+<div id="list"></div>
+<button class="exp" id="exp" onclick="exportCsv()">تصدير الصفقات CSV</button>
+</div>
+</div>
+
+<script>
+var sel={c:'C1',res:'win',ph:'p1',ddm:'tr'},col=null;
+function local(){try{return JSON.parse(localStorage.getItem('rr_trades')||'[]')}catch(e){return []}}
+var trades=local();
+function persist(){try{localStorage.setItem('rr_trades',JSON.stringify(trades))}catch(e){}}
+function setSync(t){document.getElementById('sync').textContent=t}
+function put(t){
+if(col){col.doc(String(t.id)).set(t).catch(function(){document.getElementById('msg').textContent='تعذر الحفظ، جرب تاني'})}
+else{trades.unshift(t);persist();render()}
+}
+(async function(){
+try{
+if(typeof claude==='undefined')return;
+var u=await claude.use('user'),d=await claude.use('db');
+if(!u||!d)return;
+var id=await u.id();if(!id)return;
+col=d.collection('data/users/'+id);
+var first=true;
+col.orderBy('id','desc').onSnapshot(function(sn){
+var all=sn.docs.map(function(x){return x.data()});var arr=all.filter(function(x){return x.id!==undefined});
+if(first){first=false;var cf=all.filter(function(x){return x.cfg})[0];if(cf){loadCfg(cf);calc()}else{saveCfg()}var loc=local();
+if(!arr.length&&loc.length){loc.forEach(function(t){col.doc(String(t.id)).set(t)});try{localStorage.removeItem('rr_trades')}catch(e){}arr=loc}}
+trades=arr;render();setSync('متزامن على كل أجهزتك ☁️');
+},function(){col=null;setSync('محفوظ على الجهاز ده بس')});
+}catch(e){col=null}
+})();
+function v(id){return parseFloat(document.getElementById(id).value)}
+function r2(x){return Math.round(x*100)/100}
+function f(x){return r2(x)+'%'}
+function calc(){
+var a=v('ac'),s=v('sl'),t=v('tp');
+var out=document.getElementById('out'),sub=document.getElementById('sub');
+document.getElementById('rp').textContent=(a>0&&s>=0)?'-'+f(s/a*100):'—';
+document.getElementById('gp').textContent=(a>0&&t>=0)?'+'+f(t/a*100):'—';
+if(!(s>0)||!(t>=0)){out.textContent='—';out.classList.remove('low');sub.textContent='';return}
+var rr=t/s;
+out.textContent='1 : '+r2(rr);
+out.classList.toggle('low',rr<1);
+sub.innerHTML='نسبة النجاح المطلوبة للتعادل: <b>'+(Math.round(1000/(1+rr))/10)+'%</b>';
+}
+document.querySelectorAll('.seg').forEach(function(g){
+g.addEventListener('click',function(e){
+var b=e.target.closest('button');if(!b)return;
+g.querySelectorAll('button').forEach(function(x){x.classList.remove('on')});
+b.classList.add('on');sel[g.dataset.g]=b.dataset.v;if(g.dataset.g==='ph'||g.dataset.g==='ddm'){accChart();saveCfg()}
+});
+});
+function save(){
+var s=v('sl'),t=v('tp'),m=document.getElementById('msg');
+if(!(s>0)||!(t>=0)){m.textContent='اكتب الستوب والهدف الأول';return}
+var pl=sel.res==='win'?t:(sel.res==='loss'?-s:0);
+m.textContent='';
+var TID=Date.now(),IMF=document.getElementById('im').files[0];put({id:TID,img:IMF?1:0,d:fmtD(document.getElementById('dt').value),c:sel.c,tf:document.getElementById('tf').value,pr:document.getElementById('pr').value,tm:document.getElementById('tm').value,tc:document.getElementById('tc').value,dt:document.getElementById('dt').value,ph:sel.ph,nt:document.getElementById('nt').value.trim().slice(0,120),res:sel.res,rr:r2(t/s),pl:pl});if(IMF)shrink(IMF).then(function(d){if(d)imgPut(TID,d).then(render)});document.getElementById('im').value='';document.getElementById('nt').value='';document.getElementById('tc').value='';document.getElementById('tm').value=nowT();
+}
+function del(id){try{imgDel(id)}catch(e){}
+if(col){col.doc(String(id)).delete().catch(function(){document.getElementById('msg').textContent='تعذر المسح'})}
+else{trades=trades.filter(function(x){return x.id!==id});persist();render()}
+}
+function wr(arr){var n=arr.length;if(!n)return '—';var w=arr.filter(function(x){return x.res==='win'}).length;return Math.round(w/n*100)+'% ('+n+')'}
+async function exportCsv(){
+var m=document.getElementById('msg');
+try{
+var dl=null;try{if(typeof claude!=='undefined')dl=await claude.use('downloads')}catch(e){}
+var rows=[['date','entry_time','close_time','pair','candle','cisd_tf','result','rr','pl','note','phase']].concat(trades.slice().reverse().map(function(x){return [x.dt||x.d,x.tm||'',x.tc||'',x.pr||'',x.c,x.tf,x.res,x.rr,x.pl,x.nt||'',x.ph||'p1']}));
+var csv='\ufeff'+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(',')}).join('\n');
+if(dl){await dl.save({filename:'trades.csv',data:csv})}
+else{var bl=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(bl),an=document.createElement('a');an.href=u;an.download='trades.csv';document.body.appendChild(an);an.click();an.remove();setTimeout(function(){URL.revokeObjectURL(u)},1500)}
+}catch(e){}
+}
+(async function(){try{if(typeof claude==='undefined')return;var dl=await claude.use('downloads');if(dl)document.getElementById('exp').style.display='block'}catch(e){}})();
+var cfgT=null;
+function setPh(p){sel.ph=p;document.querySelectorAll('#phs button').forEach(function(b){b.classList.toggle('on',b.dataset.v===p)})}
+function setDdm(p){sel.ddm=p;document.querySelectorAll('#dms button').forEach(function(b){b.classList.toggle('on',b.dataset.v===p)})}
+function loadCfg(c){if(!c)return;var I=function(k,id){if(c[k]>=0&&c[k]!==null)document.getElementById(id).value=c[k]};if(c.ac>0)document.getElementById('ac').value=c.ac;I('tg1','tg1');I('tg2','tg2');I('dd','dd');I('dl','dl');if(c.ph)setPh(c.ph);if(c.ddm)setDdm(c.ddm)}
+function saveCfg(){
+var c={cfg:1,ac:v('ac'),tg1:v('tg1'),tg2:v('tg2'),dd:v('dd'),dl:v('dl'),ph:sel.ph,ddm:sel.ddm};
+try{localStorage.setItem('rr_cfg',JSON.stringify(c))}catch(e){}
+if(col){clearTimeout(cfgT);cfgT=setTimeout(function(){col.doc('cfg').set(c).catch(function(){})},700)}
+}
+function bar(l,t,pct,k){
+var w=Math.max(0,Math.min(100,pct)),c=k==='p'?(pct>=100?'var(--gold)':'var(--ac)'):(pct<50?'var(--ac)':(pct<80?'var(--gold)':'var(--bad)'));
+return '<div class="pb"><div class="pbh"><span>'+l+'</span><b>'+t+'</b></div><div class="pbt"><i style="width:'+w+'%;background:'+c+'"></i></div></div>';
+}
+function accChart(){
+var a=v('ac'),ph=sel.ph,tg=ph==='p1'?v('tg1'):(ph==='p2'?v('tg2'):0),dd=v('dd'),dl=v('dl');
+document.getElementById('tgrow').style.display=ph==='fn'?'none':'';
+var el=document.getElementById('acc'),sm=document.getElementById('accs'),bb=document.getElementById('accb'),al=document.getElementById('accal');
+if(!(a>0)){el.innerHTML='';sm.innerHTML='';bb.innerHTML='';al.innerHTML='';document.getElementById('acct').innerHTML='';return}
+tg=tg>0?tg:0;dd=dd>0?dd:0;dl=dl>0?dl:0;
+var T=trades.filter(function(x){return (x.ph||'p1')===ph});
+var ddA=a*dd/100,tr=sel.ddm==='tr',pts=[a],c=a,pk=a,fls=[a-ddA],breached=false;
+T.slice().reverse().forEach(function(x){c+=x.pl;if(c>pk)pk=c;var fl=tr?Math.min(a,pk-ddA):a-ddA;pts.push(c);fls.push(fl);if(dd>0&&c<=fl)breached=true});
+var TV=a*(1+tg/100),F=fls[fls.length-1];
+var td=iso(new Date()),dgl=T.filter(function(x){return dtOf(x)===td&&x.pl<0}).reduce(function(s,x){return s-x.pl},0);
+var dlA=a*dl/100,DF=c-Math.max(0,dlA-dgl);
+var W=340,H=180,PL=8,PR=72,PT=18,PB=14,PW=W-PL-PR;
+var cand=pts.concat(dd>0?fls:[a],dl>0?[DF]:[a],tg>0?[TV]:[a]);
+var mn=Math.min.apply(null,cand),mx=Math.max.apply(null,cand),pad=(mx-mn)*.06||1;mn-=pad;mx+=pad;
+function X(i){return pts.length>1?PL+i*PW/(pts.length-1):PL+PW/2}
+function Y(z){return H-PB-(z-mn)/(mx-mn)*(H-PT-PB)}
+function lab(z,col,tag){return '<text x="'+(PL+PW+5)+'" y="'+(Y(z)-1).toFixed(1)+'" font-size="8" fill="'+col+'" opacity=".85">'+tag+'</text><text x="'+(PL+PW+5)+'" y="'+(Y(z)+9).toFixed(1)+'" font-size="10" font-weight="700" fill="'+col+'">'+r2(z)+'$</text>'}
+function ln(z,col,tag,dash){var y=Y(z).toFixed(1);return '<line x1="'+PL+'" x2="'+(PL+PW)+'" y1="'+y+'" y2="'+y+'" stroke="'+col+'" stroke-dasharray="'+dash+'"/>'+lab(z,col,tag)}
+var col=c>=a?'var(--ac)':'var(--bad)',g='<svg viewBox="0 0 '+W+' '+H+'" style="direction:ltr">';
+g+=ln(a,'var(--mu)','البداية','2 3');
+if(tg>0)g+=ln(TV,'var(--gold)','الهدف','5 4');
+if(dl>0)g+=ln(DF,'#ff9f5a','حد اليوم','3 3');
+if(dd>0){if(pts.length<2)g+=ln(F,'var(--bad)','الحد الكلي','5 4');
+else{var fp=fls.map(function(z,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(z).toFixed(1)}).join(' ');
+g+='<path d="'+fp+'" fill="none" stroke="var(--bad)" stroke-dasharray="5 4"/>'+lab(F,'var(--bad)','الحد الكلي')}}
+if(pts.length>1){var d=pts.map(function(z,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(z).toFixed(1)}).join(' ');
+g+='<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'}
+g+='<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(c).toFixed(1)+'" r="4" fill="'+col+'"/><text x="'+X(pts.length-1).toFixed(1)+'" y="'+(Y(c)-9).toFixed(1)+'" font-size="11" font-weight="800" text-anchor="end" fill="'+col+'">'+r2(c)+'$</text></svg>';
+el.innerHTML=g;
+var dayLoss=dgl,dlAbs=dlA;
+var b='';
+if(tg>0)b+=bar('التقدم نحو الهدف',r2(Math.max(0,c-a))+'$ / '+r2(a*tg/100)+'$',(c-a)/(a*tg/100)*100,'p');
+if(dl>0)b+=bar('خسارة اليوم',r2(dayLoss)+'$ / '+r2(dlAbs)+'$',dayLoss/dlAbs*100,'l');
+if(dd>0){var us=Math.max(0,ddA-(c-F));b+=bar('الخسارة الكلية',r2(us)+'$ / '+r2(ddA)+'$',us/ddA*100,'l')}
+bb.innerHTML=b;
+var room=breached?0:Math.max(0,c-F),dleft=Math.max(0,dlAbs-dayLoss),tl='';
+if(dd>0)tl+='<div class="box t1"><small>المسموح تخسره (كلي)</small><b>'+r2(room)+'$</b></div>';
+if(dl>0)tl+='<div class="box t2"><small>المسموح تخسره (يومي)</small><b>'+r2(dleft)+'$</b></div>';
+document.getElementById('acct').innerHTML=tl;
+if(dd>0&&breached)al.innerHTML='<div class="alert bad">تخطيت حد الخسارة الكلية ⚠️</div>';
+else if(dl>0&&dayLoss>=dlAbs)al.innerHTML='<div class="alert bad">وصلت لحد الخسارة اليومية، وقّف تداول النهارده ⚠️</div>';
+else if(tg>0&&c>=TV)al.innerHTML='<div class="alert good">حققت هدف المرحلة ✅ جاهز للمرحلة التالية</div>';
+else al.innerHTML='';
+var days={};T.forEach(function(x){days[dtOf(x)]=1});
+var pl=c-a,h=row('الرصيد الحالي',r2(c)+'$ ('+(pl>=0?'+':'')+f(pl/a*100)+')')+row('صفقات المرحلة',T.length)+row('أيام التداول',Object.keys(days).length);
+if(tg>0&&c<TV)h+=row('المتبقي للهدف',r2(TV-c)+'$');
+if(dd>0){h+=row('حد الخسارة الحالي',r2(F)+'$ ('+(tr?'متحرك':'ثابت')+')');if(tr&&c>F)h+=row('المسموح تخسره (كلي)','<span class="r">'+r2(c-F)+'$</span>')}
+sm.innerHTML=h;
+}
+function syncPair(v){document.getElementById('flt').value=v;render()}
+function fltChange(){var v=document.getElementById('flt').value;if(v)document.getElementById('pr').value=v;render()}
+function iso(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function fmtD(i){return i?i.split('-').reverse().join('/'):new Date().toLocaleDateString('en-GB')}
+function dtOf(x){return x.dt||iso(new Date(x.id))}
+function mins(t){var a=t.split(':');return +a[0]*60+ +a[1]}
+function dm(x){if(!x.tm||!x.tc)return null;var m=mins(x.tc)-mins(x.tm);if(m<0)m+=1440;return m}
+function fm(m){return m>=60?Math.floor(m/60)+'س '+(m%60)+'د':m+'د'}
+function dur(x){var m=dm(x);return m===null?'':fm(m)}
+function idb(){return new Promise(function(res,rej){var r=indexedDB.open('rr_imgs',1);r.onupgradeneeded=function(){r.result.createObjectStore('i')};r.onsuccess=function(){res(r.result)};r.onerror=function(){rej()}})}
+function imgPut(k,v){return idb().then(function(d){return new Promise(function(res){var t=d.transaction('i','readwrite');t.objectStore('i').put(v,k);t.oncomplete=res;t.onerror=res})}).catch(function(){})}
+function imgGet(k){return idb().then(function(d){return new Promise(function(res){var q=d.transaction('i').objectStore('i').get(k);q.onsuccess=function(){res(q.result)};q.onerror=function(){res(null)}})}).catch(function(){return null})}
+function imgDel(k){return idb().then(function(d){d.transaction('i','readwrite').objectStore('i').delete(k)}).catch(function(){})}
+function shrink(f){return new Promise(function(res){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){var M=1000,sc=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',0.72))};im.onerror=function(){res(null)};im.src=fr.result};fr.onerror=function(){res(null)};fr.readAsDataURL(f)})}
+function showImg(id){imgGet(id).then(function(d){if(!d)return;var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;padding:12px';o.innerHTML='<img src="'+d+'" style="max-width:100%;max-height:100%;border-radius:10px">';o.onclick=function(){o.remove()};document.body.appendChild(o)})}
+function nowT(){var d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function row(k,val){return '<div><span>'+k+'</span><b style="direction:ltr">'+val+'</b></div>'}
+function render(){accChart();var fl=document.getElementById('flt').value;renderView(fl?trades.filter(function(x){return x.pr===fl}):trades)}
+function chart(arr){
+var eq=document.getElementById('eq');
+var pts=[0],c=0;arr.slice().reverse().forEach(function(x){c+=x.pl;pts.push(c)});
+if(arr.length<1){eq.innerHTML='';return}
+var W=300,H=90,P=8,mn=Math.min.apply(null,pts.concat([0])),mx=Math.max.apply(null,pts.concat([0]));
+if(mx===mn){mx+=1;mn-=1}
+function X(i){return P+i*(W-2*P)/(pts.length-1)}
+function Y(v){return H-P-(v-mn)/(mx-mn)*(H-2*P)}
+var d=pts.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)}).join(' ');
+var col=c>=0?'var(--ac)':'var(--bad)';
+eq.innerHTML='<svg viewBox="0 0 '+W+' '+H+'"><line x1="'+P+'" x2="'+(W-P)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" stroke="var(--bd)" stroke-dasharray="4 4"/><path d="'+d+' L'+X(pts.length-1).toFixed(1)+' '+Y(0)+' L'+X(0)+' '+Y(0)+' Z" fill="'+col+'" opacity=".12"/><path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+}
+function renderView(trades){
+var st=document.getElementById('stats'),ls=document.getElementById('list');
+if(!trades.length){document.getElementById('eq').innerHTML='';st.innerHTML='<div class="empty" style="display:block;border:0">لسه مفيش صفقات</div>';ls.innerHTML='<div class="empty">لسه مفيش صفقات</div>';return}
+var net=trades.reduce(function(s,x){return s+x.pl},0);
+var h=row('عدد الصفقات',trades.length)+row('نسبة النجاح',wr(trades))+row('صافي الربح','<span class="'+(net>=0?'g':'r')+'">'+(net>=0?'+':'')+r2(net)+'$</span>');
+var a=v('ac');
+if(a>0){h+=row('الرصيد الحالي',r2(a+net)+'$')+row('العائد على الحساب','<span class="'+(net>=0?'g':'r')+'">'+(net>=0?'+':'')+f(net/a*100)+'</span>')}
+var k=0,lr=trades[0].res,n0={win:'ربح',loss:'خسارة',be:'تعادل'};
+while(k<trades.length&&trades[k].res===lr)k++;
+h+=row('السلسلة الحالية',k+' '+n0[lr]);
+var gw=0,gl=0;trades.forEach(function(x){if(x.pl>0)gw+=x.pl;else if(x.pl<0)gl-=x.pl});
+h+=row('Profit Factor',gl>0?r2(gw/gl):(gw>0?'∞':'—'));
+h+=row('متوسط الـ RR','1 : '+r2(trades.reduce(function(s,x){return s+x.rr},0)/trades.length));
+var td=iso(new Date()),tp=trades.filter(function(x){return dtOf(x)===td}).reduce(function(s,x){return s+x.pl},0);
+h+=row('ربح/خسارة اليوم','<span class="'+(tp>=0?'g':'r')+'">'+(tp>=0?'+':'')+r2(tp)+'$</span>');
+var pls=trades.map(function(x){return x.pl});
+h+=row('أكبر ربح','<span class="g">+'+Math.max(0,Math.max.apply(null,pls))+'$</span>')+row('أكبر خسارة','<span class="r">'+Math.min(0,Math.min.apply(null,pls))+'$</span>');
+var pk=0,cu=0,mdd=0;trades.slice().reverse().forEach(function(x){cu+=x.pl;if(cu>pk)pk=cu;if(pk-cu>mdd)mdd=pk-cu});
+h+=row('أقصى تراجع','<span class="r">-'+r2(mdd)+'$</span>');
+var ds=trades.map(dm).filter(function(m){return m!==null});
+if(ds.length)h+=row('متوسط مدة الصفقة',fm(Math.round(ds.reduce(function(a,b){return a+b},0)/ds.length)));
+var wd=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+wd.forEach(function(n,i){var z=trades.filter(function(x){return new Date(dtOf(x)+'T12:00:00').getDay()===i});if(z.length)h+=row('نجاح يوم '+n,wr(z))});
+['C1','C2','C3'].forEach(function(c){h+=row('نجاح '+c,wr(trades.filter(function(x){return x.c===c})))});
+var pn={XAU:'ذهب',NAS:'ناسداك',EUR:'يورو',GBP:'استرليني',JPY:'ين ياباني'},pc={XAU:'#f5c451',NAS:'#4da3ff',EUR:'#b794f6',GBP:'#ff9f5a',JPY:'#ff6b9d'},phn={p1:'م1',p2:'م2',fn:'ممول'};
+['XAU','NAS','EUR','GBP','JPY'].forEach(function(p){var z=trades.filter(function(x){return x.pr===p});if(z.length)h+=row('نجاح '+pn[p],wr(z))});
+var tfs={};trades.forEach(function(x){(tfs[x.tf]=tfs[x.tf]||[]).push(x)});
+Object.keys(tfs).forEach(function(k){h+=row('نجاح CISD '+k,wr(tfs[k]))});
+st.innerHTML=h;chart(trades);
+var names={win:'ربح',loss:'خسارة',be:'تعادل'};
+ls.innerHTML=trades.map(function(x){
+return '<div class="tr '+x.res+'"><div class="i">'+(x.pr?'<span class="dot" style="background:'+pc[x.pr]+'"></span>'+pn[x.pr]+' · ':'')+x.c+' · '+x.tf+' · '+names[x.res]+' · '+phn[x.ph||'p1']+'<small>'+x.d+(x.tm?' '+x.tm+(x.tc?' → '+x.tc:''):'')+(dur(x)?' · '+dur(x):'')+' · RR 1:'+x.rr+(x.nt?' · '+esc(x.nt):'')+'</small></div><div class="d '+(x.pl>0?'g':(x.pl<0?'r':''))+'">'+(x.pl>0?'+':'')+x.pl+'$</div>'+(x.img?'<button class="x" onclick="showImg('+x.id+')">🖼</button>':'')+'<button class="x" onclick="del('+x.id+')">×</button></div>';
+}).join('');
+}
+document.getElementById('tm').value=nowT();document.getElementById('dt').value=iso(new Date());
+try{loadCfg(JSON.parse(localStorage.getItem('rr_cfg')||'null'))}catch(e){}
+calc();render();
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+</script>
+</body>
+</html>
